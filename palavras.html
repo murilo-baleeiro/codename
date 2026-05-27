@@ -1,662 +1,757 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-    />
-    <title>CODENAME — Tela dos Jogadores</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* ── Reset & Variables ─────────────────────────────── */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>CODENAME — Tela dos Jogadores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ── Reset & Variables ─────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green: #1a7a4a;
+      --green-light: #d4f0e2;
+      --green-bg: #eafaf2;
+      --blue: #1a4d8f;
+      --blue-light: #cce0ff;
+      --blue-bg: #e8f1ff;
+      --gray: #8a8a8a;
+      --gray-light: #e8e8e8;
+      --gray-bg: #f0f0f0;
+      --black-card: #111111;
+      --cream: #faf8f3;
+      --ink: #1c1c1e;
+      --border: #d8d5ce;
+      --header-h: 54px;
+      --footer-h: 46px;
+      --white: #ffffff;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--cream);
+      font-family: "Barlow", sans-serif;
+      color: var(--ink);
+    }
+
+    /* ── Layout ────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Header ────────────────────────────────────────── */
+    header {
+      height: var(--header-h);
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    .logo {
+      font-family: "Black Han Sans", sans-serif;
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .logo span {
+      color: #f0c040;
+    }
+
+    .scores {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .score-chip {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 14px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-chip.green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .score-chip.blue {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .score-chip .num {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Progress bars inside chips */
+    .chip-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.12);
+      width: 60px;
+      overflow: hidden;
+    }
+
+    .chip-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .score-chip.green .chip-fill {
+      background: var(--green);
+    }
+
+    .score-chip.blue .chip-fill {
+      background: var(--blue);
+    }
+
+    /* Team labels on right */
+    .turn-indicator {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    /* ── Grid Area ─────────────────────────────────────── */
+    .grid-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 8px;
+      width: 100%;
+      height: 100%;
+      max-width: 960px;
+    }
+
+    /* ── Cards ─────────────────────────────────────────── */
+    .card {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* border: 2px solid var(--border); */
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+      transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        transform 0.2s;
+      min-height: 0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-word {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      padding: 4px 6px;
+      text-transform: uppercase;
+      color: var(--ink);
+      transition: color 0.3s ease;
+    }
+
+    /* ── Revealed states ────────────────────────────────── */
+    .card.revealed-green {
+      background: var(--green);
+      border-color: var(--green);
+      animation: popIn 0.3s ease;
+    }
+
+    .card.revealed-green .card-word {
+      color: var(--white);
+    }
+
+    .card.revealed-blue {
+      background: var(--blue);
+      border-color: var(--blue);
+      animation: popIn 0.3s ease;
+    }
+
+    .card.revealed-blue .card-word {
+      color: var(--white);
+    }
+
+    .card.revealed-gray {
+      background: var(--gray-bg);
+      border-color: #bbb;
+      animation: popIn 0.3s ease;
+    }
+
+    .card.revealed-gray .card-word {
+      color: var(--gray);
+    }
+
+    .card.revealed-black {
+      background: var(--black-card);
+      border-color: #000;
+      animation: shakePop 0.5s ease;
+    }
+
+    .card.revealed-black .card-word {
+      color: #fff;
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.92);
       }
 
-      :root {
-        --green: #1a7a4a;
-        --green-light: #d4f0e2;
-        --green-bg: #eafaf2;
-        --blue: #1a4d8f;
-        --blue-light: #cce0ff;
-        --blue-bg: #e8f1ff;
-        --gray: #8a8a8a;
-        --gray-light: #e8e8e8;
-        --gray-bg: #f0f0f0;
-        --black-card: #111111;
-        --cream: #faf8f3;
-        --ink: #1c1c1e;
-        --border: #d8d5ce;
-        --header-h: 54px;
-        --footer-h: 46px;
-        --white: #ffffff;
+      60% {
+        transform: scale(1.05);
       }
 
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-        background: var(--cream);
-        font-family: "Barlow", sans-serif;
-        color: var(--ink);
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes shakePop {
+      0% {
+        transform: scale(0.9) rotate(-2deg);
       }
 
-      /* ── Layout ────────────────────────────────────────── */
-      .layout {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
+      25% {
+        transform: scale(1.08) rotate(2deg);
       }
 
-      /* ── Header ────────────────────────────────────────── */
-      header {
-        height: var(--header-h);
-        background: var(--ink);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-        flex-shrink: 0;
-        gap: 12px;
+      50% {
+        transform: scale(1.03) rotate(-1deg);
       }
 
-      .logo {
-        font-family: "Black Han Sans", sans-serif;
-        font-size: 22px;
-        color: #fff;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+      100% {
+        transform: scale(1) rotate(0deg);
       }
-      .logo span {
-        color: #f0c040;
-      }
+    }
 
-      .scores {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .score-chip {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        padding: 4px 14px;
-        border-radius: 6px;
-        letter-spacing: 1px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .score-chip.green {
-        background: var(--green-light);
-        color: var(--green);
-      }
-      .score-chip.blue {
-        background: var(--blue-light);
-        color: var(--blue);
-      }
-      .score-chip .num {
-        font-size: 18px;
-        font-weight: 700;
-      }
-
-      /* Progress bars inside chips */
-      .chip-bar {
-        height: 4px;
-        border-radius: 2px;
-        background: rgba(0, 0, 0, 0.12);
-        width: 60px;
-        overflow: hidden;
-      }
-      .chip-fill {
-        height: 100%;
-        border-radius: 2px;
-        transition: width 0.4s ease;
-      }
-      .score-chip.green .chip-fill {
-        background: var(--green);
-      }
-      .score-chip.blue .chip-fill {
-        background: var(--blue);
-      }
-
-      /* Team labels on right */
-      .turn-indicator {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        color: #aaa;
-        text-transform: uppercase;
-      }
-
-      /* ── Grid Area ─────────────────────────────────────── */
-      .grid-area {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px 16px;
-        overflow: hidden;
-        min-height: 0;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-        gap: 8px;
-        width: 100%;
-        height: 100%;
-        max-width: 960px;
-      }
-
-      /* ── Cards ─────────────────────────────────────────── */
-      .card {
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* border: 2px solid var(--border); */
-        background: #ffffff;
-        position: relative;
-        overflow: hidden;
-        transition:
-          background 0.35s ease,
-          border-color 0.35s ease,
-          transform 0.2s;
-        min-height: 0;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-      }
-
-      .card-word {
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        text-align: center;
-        letter-spacing: 0.5px;
-        line-height: 1.1;
-        padding: 4px 6px;
-        text-transform: uppercase;
-        color: var(--ink);
-        transition: color 0.3s ease;
-      }
-
-      /* ── Revealed states ────────────────────────────────── */
-      .card.revealed-green {
-        background: var(--green);
-        border-color: var(--green);
-        animation: popIn 0.3s ease;
-      }
-      .card.revealed-green .card-word {
-        color: var(--white);
-      }
-
-      .card.revealed-blue {
-        background: var(--blue);
-        border-color: var(--blue);
-        animation: popIn 0.3s ease;
-      }
-      .card.revealed-blue .card-word {
-        color: var(--white);
-      }
-
-      .card.revealed-gray {
-        background: var(--gray-bg);
-        border-color: #bbb;
-        animation: popIn 0.3s ease;
-      }
-      .card.revealed-gray .card-word {
-        color: var(--gray);
-      }
-
-      .card.revealed-black {
-        background: var(--black-card);
-        border-color: #000;
-        animation: shakePop 0.5s ease;
-      }
-      .card.revealed-black .card-word {
-        color: #fff;
-      }
-
-      @keyframes popIn {
-        0% {
-          transform: scale(0.92);
-        }
-        60% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes shakePop {
-        0% {
-          transform: scale(0.9) rotate(-2deg);
-        }
-        25% {
-          transform: scale(1.08) rotate(2deg);
-        }
-        50% {
-          transform: scale(1.03) rotate(-1deg);
-        }
-        100% {
-          transform: scale(1) rotate(0deg);
-        }
-      }
-
-      /* ── Revealed check mark ─────────────────────────────── */
-      .card.revealed-green::after,
-      .card.revealed-blue::after,
-      .card.revealed-gray::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          135deg,
+    /* ── Revealed check mark ─────────────────────────────── */
+    .card.revealed-green::after,
+    .card.revealed-blue::after,
+    .card.revealed-gray::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
           rgba(255, 255, 255, 0.25) 0%,
-          transparent 60%
-        );
-      }
-      .card.revealed-black::after {
-        content: "☠";
-        position: absolute;
-        font-size: 20px;
-        opacity: 0.25;
-        top: 4px;
-        right: 6px;
+          transparent 60%);
+    }
+
+    .card.revealed-black::after {
+      content: "☠";
+      position: absolute;
+      font-size: 20px;
+      opacity: 0.25;
+      top: 4px;
+      right: 6px;
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer {
+      height: var(--footer-h);
+      background: #f0ede6;
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+
+    .footer-info {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #aaa;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .remaining-count {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray);
+      letter-spacing: 1px;
+    }
+
+    .remaining-count span {
+      color: var(--ink);
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      display: inline-block;
+    }
+
+    .conn-dot.on {
+      background: #2ecc71;
+    }
+
+    /* ── Game Over Overlay ───────────────────────────────── */
+    .gameover-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.75);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .gameover-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
 
-      /* ── Footer ─────────────────────────────────────────── */
-      footer {
-        height: var(--footer-h);
-        background: #f0ede6;
-        border-top: 1.5px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-        flex-shrink: 0;
+      to {
+        opacity: 1;
+      }
+    }
+
+    .gameover-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 52px;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+      animation: riseUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      border-top: 6px solid;
+    }
+
+    .gameover-card.green {
+      border-color: var(--green);
+    }
+
+    .gameover-card.blue {
+      border-color: var(--blue);
+    }
+
+    .gameover-card.black {
+      border-color: #111;
+    }
+
+    @keyframes riseUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
       }
 
-      .footer-info {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 12px;
-        font-weight: 600;
-        color: #aaa;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .go-emoji {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    .go-title {
+      font-family: "Black Han Sans", sans-serif;
+      font-size: 28px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .gameover-card.green .go-title {
+      color: var(--green);
+    }
+
+    .gameover-card.blue .go-title {
+      color: var(--blue);
+    }
+
+    .gameover-card.black .go-title {
+      color: #111;
+    }
+
+    .go-sub {
+      font-size: 14px;
+      color: #999;
+      font-family: "Barlow Condensed", sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .go-countdown {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+      font-size: 13px;
+      color: #aaa;
+      font-family: "Barlow Condensed", sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .go-countdown span {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .btn-newgame-overlay {
+      margin-top: 22px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 11px 32px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: var(--ink);
+      color: #fff;
+      transition:
+        background 0.15s,
+        transform 0.1s;
+      display: inline-block;
+    }
+
+    .btn-newgame-overlay:hover {
+      background: #333;
+    }
+
+    .btn-newgame-overlay:active {
+      transform: scale(0.96);
+    }
+
+    /* ── Pending reveal pulse animation ─────────────────── */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(240, 192, 64, 0.4);
       }
 
-      .remaining-count {
-        font-family: "Barlow Condensed", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--gray);
-        letter-spacing: 1px;
+      50% {
+        box-shadow: 0 0 0 8px rgba(240, 192, 64, 0);
       }
-      .remaining-count span {
-        color: var(--ink);
-      }
+    }
+  </style>
+</head>
 
-      .conn-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #ccc;
-        display: inline-block;
-      }
-      .conn-dot.on {
-        background: #2ecc71;
-      }
-
-      /* ── Game Over Overlay ───────────────────────────────── */
-      .gameover-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(6px);
-        background: rgba(255, 255, 255, 0.75);
-        animation: fadeIn 0.4s ease;
-      }
-      .gameover-overlay.active {
-        display: flex;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      .gameover-card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 40px 52px;
-        text-align: center;
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
-        animation: riseUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        border-top: 6px solid;
-      }
-      .gameover-card.green {
-        border-color: var(--green);
-      }
-      .gameover-card.blue {
-        border-color: var(--blue);
-      }
-      .gameover-card.black {
-        border-color: #111;
-      }
-
-      @keyframes riseUp {
-        from {
-          transform: translateY(30px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      .go-emoji {
-        font-size: 56px;
-        margin-bottom: 12px;
-      }
-      .go-title {
-        font-family: "Black Han Sans", sans-serif;
-        font-size: 28px;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        margin-bottom: 6px;
-      }
-      .gameover-card.green .go-title {
-        color: var(--green);
-      }
-      .gameover-card.blue .go-title {
-        color: var(--blue);
-      }
-      .gameover-card.black .go-title {
-        color: #111;
-      }
-
-      .go-sub {
-        font-size: 14px;
-        color: #999;
-        font-family: "Barlow Condensed", sans-serif;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-      }
-
-      .btn-newgame-overlay {
-        margin-top: 22px;
-        font-family: "Barlow Condensed", sans-serif;
-        font-weight: 700;
-        font-size: 15px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        padding: 11px 32px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        background: var(--ink);
-        color: #fff;
-        transition:
-          background 0.15s,
-          transform 0.1s;
-        display: inline-block;
-      }
-      .btn-newgame-overlay:hover {
-        background: #333;
-      }
-      .btn-newgame-overlay:active {
-        transform: scale(0.96);
-      }
-
-      /* ── Pending reveal pulse animation ─────────────────── */
-      @keyframes pulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(240, 192, 64, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 0 8px rgba(240, 192, 64, 0);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="layout">
-      <!-- Header -->
-      <header>
-        <div style="display: flex; align-items: center; gap: 12px">
-          <span class="logo">CODE<span>NAME</span></span>
-        </div>
-
-        <div class="scores">
-          <div class="score-chip green">
-            🟢&nbsp;VERDE
-            <span class="num" id="score-green">0</span>
-            <div class="chip-bar">
-              <div class="chip-fill" id="bar-green" style="width: 0%"></div>
-            </div>
-            /10
-          </div>
-          <div class="score-chip blue">
-            🔵&nbsp;AZUL
-            <span class="num" id="score-blue">0</span>
-            <div class="chip-bar">
-              <div class="chip-fill" id="bar-blue" style="width: 0%"></div>
-            </div>
-            /10
-          </div>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 6px">
-          <span class="conn-dot" id="conn-dot"></span>
-          <span class="turn-indicator" id="conn-label">Conectando...</span>
-        </div>
-      </header>
-
-      <!-- Grid -->
-      <div class="grid-area">
-        <div class="grid" id="grid"></div>
+<body>
+  <div class="layout">
+    <!-- Header -->
+    <header>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span class="logo">CODE<span>NAME</span></span>
       </div>
 
-      <!-- Footer -->
-      <footer>
-        <div class="footer-info">
-          <span class="conn-dot on"></span>
-          Tela dos Jogadores — Apenas observe
+      <div class="scores">
+        <div class="score-chip green">
+          🟢&nbsp;VERDE
+          <span class="num" id="score-green">0</span>
+          <div class="chip-bar">
+            <div class="chip-fill" id="bar-green" style="width: 0%"></div>
+          </div>
+          /10
         </div>
-        <div class="remaining-count" id="remaining-info">—</div>
-      </footer>
+        <div class="score-chip blue">
+          🔵&nbsp;AZUL
+          <span class="num" id="score-blue">0</span>
+          <div class="chip-bar">
+            <div class="chip-fill" id="bar-blue" style="width: 0%"></div>
+          </div>
+          /10
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px">
+        <span class="conn-dot" id="conn-dot"></span>
+        <span class="turn-indicator" id="conn-label">Conectando...</span>
+      </div>
+    </header>
+
+    <!-- Grid -->
+    <div class="grid-area">
+      <div class="grid" id="grid"></div>
     </div>
 
-    <!-- Game Over Overlay -->
-    <div class="gameover-overlay" id="gameover-overlay">
-      <div class="gameover-card" id="gameover-card">
-        <div class="go-emoji" id="go-emoji"></div>
-        <div class="go-title" id="go-title"></div>
-        <div class="go-sub" id="go-sub"></div>
+    <!-- Footer -->
+    <footer>
+      <div class="footer-info">
+        <span class="conn-dot on"></span>
+        Tela dos Jogadores — Apenas observe
+      </div>
+      <div class="remaining-count" id="remaining-info">—</div>
+    </footer>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div class="gameover-overlay" id="gameover-overlay">
+    <div class="gameover-card" id="gameover-card">
+      <div class="go-emoji" id="go-emoji"></div>
+      <div class="go-title" id="go-title"></div>
+      <div class="go-sub" id="go-sub"></div>
+      <div class="go-countdown">
+        Revelando as cores em <span id="countdown-timer">5</span>s
       </div>
     </div>
+  </div>
 
-    <script>
-      // ─── State ────────────────────────────────────────────
-      const STORAGE_KEY = "codename_player_state";
-      let gameState = null;
-      let ws = null;
+  <script>
+    // ─── State ────────────────────────────────────────────
+    const STORAGE_KEY = "codename_player_state";
+    let gameState = null;
+    let ws = null;
+    let allColorsRevealed = false;
+    let gameOverTimeoutId = null;
+    let countdownIntervalId = null;
 
-      // ─── WebSocket ────────────────────────────────────────
-      function connectWS() {
-        const proto = location.protocol === "https:" ? "wss" : "ws";
-        ws = new WebSocket(`${proto}://${location.host}`);
+    // ─── WebSocket ────────────────────────────────────────
+    function connectWS() {
+      const proto = location.protocol === "https:" ? "wss" : "ws";
+      ws = new WebSocket(`${proto}://${location.host}`);
 
-        ws.onopen = () => setConn(true);
+      ws.onopen = () => setConn(true);
 
-        ws.onmessage = (e) => {
-          const msg = JSON.parse(e.data);
-          if (msg.type === "gameState") {
-            const prevState = gameState;
-            gameState = msg.data;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
-            render(prevState);
-          }
-        };
+      ws.onmessage = (e) => {
+        const msg = JSON.parse(e.data);
+        if (msg.type === "gameState") {
+          const prevState = gameState;
+          gameState = msg.data;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+          render(prevState);
+        }
+      };
 
-        ws.onclose = () => {
-          setConn(false);
-          setTimeout(connectWS, 2000);
-        };
-        ws.onerror = () => ws.close();
-      }
+      ws.onclose = () => {
+        setConn(false);
+        setTimeout(connectWS, 2000);
+      };
+      ws.onerror = () => ws.close();
+    }
 
-      function setConn(on) {
-        document.getElementById("conn-dot").classList.toggle("on", on);
-        document.getElementById("conn-label").textContent = on
-          ? "Conectado"
-          : "Reconectando...";
-      }
+    function setConn(on) {
+      document.getElementById("conn-dot").classList.toggle("on", on);
+      document.getElementById("conn-label").textContent = on
+        ? "Conectado"
+        : "Reconectando...";
+    }
 
-      // ─── Render ───────────────────────────────────────────
-      function render(prevState) {
-        if (!gameState) return;
+    // ─── Render ───────────────────────────────────────────
+    function render(prevState) {
+      if (!gameState) return;
 
-        // Scores
-        const sg = gameState.scores.green;
-        const sb = gameState.scores.blue;
-        document.getElementById("score-green").textContent = sg;
-        document.getElementById("score-blue").textContent = sb;
-        document.getElementById("bar-green").style.width =
-          (sg / 10) * 100 + "%";
-        document.getElementById("bar-blue").style.width = (sb / 10) * 100 + "%";
-
-        // Remaining
-        const total = gameState.words.length;
-        const revealed = gameState.words.filter((w) => w.revealed).length;
-        document.getElementById("remaining-info").innerHTML =
-          `Palavras reveladas: <span>${revealed}</span>/${total}`;
-
-        // Grid
-        renderGrid(prevState);
-
-        // Game Over
-        if (gameState.gameOver) renderGameOver();
-        else {
-          document
-            .getElementById("gameover-overlay")
-            .classList.remove("active");
+      // Reset das cores reveladas ao iniciar novo jogo
+      if (!gameState.gameOver && allColorsRevealed) {
+        allColorsRevealed = false;
+        if (gameOverTimeoutId !== null) {
+          clearTimeout(gameOverTimeoutId);
+          clearInterval(countdownIntervalId);
+          gameOverTimeoutId = null;
+          countdownIntervalId = null;
         }
       }
 
-      function renderGrid(prevState) {
-        const grid = document.getElementById("grid");
+      // Scores
+      const sg = gameState.scores.green;
+      const sb = gameState.scores.blue;
+      document.getElementById("score-green").textContent = sg;
+      document.getElementById("score-blue").textContent = sb;
+      document.getElementById("bar-green").style.width =
+        (sg / 10) * 100 + "%";
+      document.getElementById("bar-blue").style.width = (sb / 10) * 100 + "%";
 
-        // Check if we need a full rebuild vs incremental update
-        const needsRebuild =
-          !prevState ||
-          prevState.words.length !== gameState.words.length ||
-          prevState.words.some((w, i) => w.word !== gameState.words[i].word);
+      // Remaining
+      const total = gameState.words.length;
+      const revealed = gameState.words.filter((w) => w.revealed).length;
+      document.getElementById("remaining-info").innerHTML =
+        `Palavras reveladas: <span>${revealed}</span>/${total}`;
 
-        if (needsRebuild) {
-          grid.innerHTML = "";
-          gameState.words.forEach((entry, i) => {
-            const card = document.createElement("div");
-            card.className = buildCardClass(entry);
-            card.dataset.index = i;
-            card.innerHTML = `<span class="card-word">${entry.word}</span>`;
-            adaptFontSize(card.querySelector(".card-word"), entry.word);
-            grid.appendChild(card);
-          });
-          return;
-        }
+      // Grid
+      renderGrid(prevState);
 
-        // Incremental: only update changed cards
+      // Game Over
+      if (gameState.gameOver) renderGameOver();
+      else {
+        document
+          .getElementById("gameover-overlay")
+          .classList.remove("active");
+      }
+    }
+
+    function renderGrid(prevState) {
+      const grid = document.getElementById("grid");
+
+      // Check if we need a full rebuild vs incremental update
+      const needsRebuild =
+        !prevState ||
+        prevState.words.length !== gameState.words.length ||
+        prevState.words.some((w, i) => w.word !== gameState.words[i].word);
+
+      if (needsRebuild) {
+        grid.innerHTML = "";
         gameState.words.forEach((entry, i) => {
-          const prev = prevState.words[i];
-          if (!prev || prev.revealed !== entry.revealed) {
-            const card = grid.children[i];
-            if (card) {
-              card.className = buildCardClass(entry);
-            }
-          }
+          const card = document.createElement("div");
+          card.className = buildCardClass(entry);
+          card.dataset.index = i;
+          card.innerHTML = `<span class="card-word">${entry.word}</span>`;
+          adaptFontSize(card.querySelector(".card-word"), entry.word);
+          grid.appendChild(card);
         });
+        return;
       }
 
-      function buildCardClass(entry) {
-        let cls = "card";
-        if (entry.revealed) {
-          cls += ` revealed-${entry.color}`;
+      // Incremental: only update changed cards
+      gameState.words.forEach((entry, i) => {
+        const prev = prevState.words[i];
+        if (!prev || prev.revealed !== entry.revealed) {
+          const card = grid.children[i];
+          if (card) {
+            card.className = buildCardClass(entry);
+          }
         }
-        return cls;
+      });
+    }
+
+    function buildCardClass(entry) {
+      let cls = "card";
+      if (entry.revealed) {
+        cls += ` revealed-${entry.color}`;
+      } else if (allColorsRevealed) {
+        // Se jogo terminou e todas cores devem ser reveladas
+        cls += ` revealed-${entry.color}`;
+      }
+      return cls;
+    }
+
+    function adaptFontSize(el, word) {
+      const len = word.length;
+      if (len <= 5) el.style.fontSize = "clamp(16px, 2.5vw, 28px)";
+      else if (len <= 8) el.style.fontSize = "clamp(15px, 2.2vw, 26px)";
+      else if (len <= 11) el.style.fontSize = "clamp(14px, 1.8vw, 22px)";
+      else el.style.fontSize = "clamp(13px, 1.5vw, 18px)";
+    }
+
+    function renderGameOver() {
+      const overlay = document.getElementById("gameover-overlay");
+      const card = document.getElementById("gameover-card");
+      const emoji = document.getElementById("go-emoji");
+      const title = document.getElementById("go-title");
+      const sub = document.getElementById("go-sub");
+
+      card.className = "gameover-card";
+      const w = gameState.winner;
+
+      if (w === "green") {
+        card.classList.add("green");
+        emoji.textContent = "🏆";
+        title.textContent = "VERDE VENCEU!";
+        sub.textContent = "Equipe Verde descobriu todas as suas palavras!";
+      } else if (w === "blue") {
+        card.classList.add("blue");
+        emoji.textContent = "🏆";
+        title.textContent = "AZUL VENCEU!";
+        sub.textContent = "Equipe Azul descobriu todas as suas palavras!";
+      } else {
+        card.classList.add("black");
+        emoji.textContent = "☠️";
+        title.textContent = "FIM DE JOGO!";
+        sub.textContent = "A palavra proibida foi revelada!";
       }
 
-      function adaptFontSize(el, word) {
-        const len = word.length;
-        if (len <= 5) el.style.fontSize = "clamp(12px, 2vw, 22px)";
-        else if (len <= 8) el.style.fontSize = "clamp(11px, 1.7vw, 19px)";
-        else if (len <= 11) el.style.fontSize = "clamp(10px, 1.4vw, 16px)";
-        else el.style.fontSize = "clamp(9px,  1.2vw, 14px)";
+      overlay.classList.add("active");
+
+      // Limpar timeout anterior se houver
+      if (gameOverTimeoutId !== null) {
+        clearTimeout(gameOverTimeoutId);
       }
 
-      function renderGameOver() {
-        const overlay = document.getElementById("gameover-overlay");
-        const card = document.getElementById("gameover-card");
-        const emoji = document.getElementById("go-emoji");
-        const title = document.getElementById("go-title");
-        const sub = document.getElementById("go-sub");
+      // Contagem regressiva de 5 segundos
+      let secondsLeft = 5;
+      const timerElement = document.getElementById("countdown-timer");
+      timerElement.textContent = secondsLeft;
 
-        card.className = "gameover-card";
-        const w = gameState.winner;
+      countdownIntervalId = setInterval(() => {
+        secondsLeft--;
+        timerElement.textContent = secondsLeft;
 
-        if (w === "green") {
-          card.classList.add("green");
-          emoji.textContent = "🏆";
-          title.textContent = "VERDE VENCEU!";
-          sub.textContent = "Equipe Verde descobriu todas as suas palavras!";
-        } else if (w === "blue") {
-          card.classList.add("blue");
-          emoji.textContent = "🏆";
-          title.textContent = "AZUL VENCEU!";
-          sub.textContent = "Equipe Azul descobriu todas as suas palavras!";
-        } else {
-          card.classList.add("black");
-          emoji.textContent = "☠️";
-          title.textContent = "FIM DE JOGO!";
-          sub.textContent = "A palavra proibida foi revelada!";
+        if (secondsLeft <= 0) {
+          clearInterval(countdownIntervalId);
+          overlay.classList.remove("active");
+          allColorsRevealed = true;
+          renderGrid(null); // Re-renderiza grid com todas as cores visíveis
+          gameOverTimeoutId = null;
+          countdownIntervalId = null;
         }
+      }, 1000);
 
-        overlay.classList.add("active");
-      }
+      gameOverTimeoutId = countdownIntervalId;
+    }
 
-      // ─── Init ─────────────────────────────────────────────
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          gameState = JSON.parse(saved);
-          render(null);
-        } catch {}
-      }
-      connectWS();
-    </script>
-  </body>
+    // ─── Init ─────────────────────────────────────────────
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        gameState = JSON.parse(saved);
+        render(null);
+      } catch { }
+    }
+    connectWS();
+  </script>
+</body>
+
 </html>
