@@ -351,6 +351,14 @@
       transform: scale(0.96);
     }
 
+    .btn:disabled,
+    .btn-newgame-banner:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      pointer-events: none;
+    }
+
     .btn-new {
       background: var(--ink);
       color: #fff;
@@ -642,22 +650,6 @@
       <div class="grid" id="grid"></div>
     </div>
 
-    <!-- Legend -->
-    <!-- <div class="legend-bar">
-        <div class="legend-item">
-          <span class="legend-swatch green"></span> Verde (10)
-        </div>
-        <div class="legend-item">
-          <span class="legend-swatch blue"></span> Azul (10)
-        </div>
-        <div class="legend-item">
-          <span class="legend-swatch gray"></span> Neutra (4)
-        </div>
-        <div class="legend-item">
-          <span class="legend-swatch black"></span> Fim de Jogo (1)
-        </div>
-      </div> -->
-
     <!-- Footer -->
     <footer>
       <div class="footer-left">
@@ -723,119 +715,12 @@
   </div>
 
   <script>
-    // ─── Sound Engine (Web Audio API) ────────────────────────────────────────
-    const SFX = (() => {
-      let ctx = null;
-      let unlocked = false;
-
-      function getCtx() {
-        if (!ctx)
-          ctx = new (window.AudioContext || window.webkitAudioContext)();
-        return ctx;
-      }
-
-      function unlock() {
-        if (unlocked) return;
-        unlocked = true;
-        const ac = getCtx();
-        if (ac.state === "suspended") ac.resume();
-      }
-
-      // Som de seleção/hover de carta — tick suave
-      function playSelect() {
-        unlock();
-        const ac = getCtx();
-        const now = ac.currentTime;
-        const osc = ac.createOscillator();
-        const env = ac.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(660, now);
-        osc.frequency.exponentialRampToValueAtTime(720, now + 0.06);
-        env.gain.setValueAtTime(0, now);
-        env.gain.linearRampToValueAtTime(0.18, now + 0.01);
-        env.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-        osc.connect(env);
-        env.connect(ac.destination);
-        osc.start(now);
-        osc.stop(now + 0.09);
-      }
-
-      // Som de abrir modal — dois tons ascendentes
-      function playOpenModal() {
-        unlock();
-        const ac = getCtx();
-        const now = ac.currentTime;
-        [
-          [440, 0],
-          [600, 0.07],
-        ].forEach(([freq, delay]) => {
-          const osc = ac.createOscillator();
-          const env = ac.createGain();
-          osc.type = "triangle";
-          osc.frequency.value = freq;
-          const t = now + delay;
-          env.gain.setValueAtTime(0, t);
-          env.gain.linearRampToValueAtTime(0.22, t + 0.012);
-          env.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-          osc.connect(env);
-          env.connect(ac.destination);
-          osc.start(t);
-          osc.stop(t + 0.14);
-        });
-      }
-
-      // Som de confirmar reveal — acorde de confirmação
-      function playConfirm() {
-        unlock();
-        const ac = getCtx();
-        const now = ac.currentTime;
-        [523, 659, 784].forEach((freq, i) => {
-          const osc = ac.createOscillator();
-          const env = ac.createGain();
-          osc.type = "triangle";
-          osc.frequency.value = freq;
-          const t = now + i * 0.055;
-          env.gain.setValueAtTime(0, t);
-          env.gain.linearRampToValueAtTime(0.2, t + 0.015);
-          env.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-          osc.connect(env);
-          env.connect(ac.destination);
-          osc.start(t);
-          osc.stop(t + 0.25);
-        });
-      }
-
-      // Som de cancelar/fechar — tom descendente
-      function playCancel() {
-        unlock();
-        const ac = getCtx();
-        const now = ac.currentTime;
-        const osc = ac.createOscillator();
-        const env = ac.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(480, now);
-        osc.frequency.exponentialRampToValueAtTime(300, now + 0.14);
-        env.gain.setValueAtTime(0.18, now);
-        env.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.connect(env);
-        env.connect(ac.destination);
-        osc.start(now);
-        osc.stop(now + 0.17);
-      }
-
-      return { playSelect, playOpenModal, playConfirm, playCancel, unlock };
-    })();
-
-    document.addEventListener("click", () => SFX.unlock(), { once: true });
-    document.addEventListener("touchstart", () => SFX.unlock(), {
-      once: true,
-    });
-
     // ─── State ────────────────────────────────────────────
     const STORAGE_KEY = "codename_master_state";
     let gameState = null;
     let pendingRevealIndex = null;
     let ws = null;
+    let newGameCooldownTimer = null;
 
     // ─── WebSocket ────────────────────────────────────────
     function connectWS() {
@@ -872,6 +757,12 @@
         : "Reconectando...";
     }
 
+    function setNewGameEnabled(enabled) {
+      document.querySelectorAll('.btn-new, .btn-newgame-banner').forEach(btn => {
+        btn.disabled = !enabled;
+      });
+    }
+
     // ─── Render ───────────────────────────────────────────
     function render() {
       if (!gameState) return;
@@ -897,6 +788,23 @@
 
       // Game over banner
       renderGameOver();
+
+      // New game button cooldown after game over
+      if (gameState.gameOver) {
+        if (newGameCooldownTimer === null) {
+          setNewGameEnabled(false);
+          newGameCooldownTimer = setTimeout(() => {
+            setNewGameEnabled(true);
+            newGameCooldownTimer = null;
+          }, 5000);
+        }
+      } else {
+        if (newGameCooldownTimer !== null) {
+          clearTimeout(newGameCooldownTimer);
+          newGameCooldownTimer = null;
+        }
+        setNewGameEnabled(true);
+      }
 
       // Grid
       const grid = document.getElementById("grid");
@@ -979,6 +887,7 @@
       document.getElementById("newgame-modal").classList.remove("open");
     }
     function sendNewGame() {
+      if (document.querySelector('.btn-new')?.disabled) return;
       ws.send(JSON.stringify({ type: "newGame" }));
       closeNewGameModal();
     }

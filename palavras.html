@@ -488,6 +488,7 @@
         box-shadow: 0 0 0 8px rgba(240, 192, 64, 0);
       }
     }
+
   </style>
 </head>
 
@@ -535,7 +536,9 @@
         <span class="conn-dot on"></span>
         Tela dos Jogadores — Apenas observe
       </div>
-      <div class="remaining-count" id="remaining-info">—</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="remaining-count" id="remaining-info">—</span>
+      </div>
     </footer>
   </div>
 
@@ -595,8 +598,8 @@
     function render(prevState) {
       if (!gameState) return;
 
-      // Reset das cores reveladas ao iniciar novo jogo
-      if (!gameState.gameOver && allColorsRevealed) {
+      // Reset ao iniciar novo jogo — limpa timer de revelação anterior
+      if (!gameState.gameOver) {
         allColorsRevealed = false;
         if (gameOverTimeoutId !== null) {
           clearTimeout(gameOverTimeoutId);
