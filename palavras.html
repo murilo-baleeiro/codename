@@ -5,6 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>CODENAME — Tela dos Jogadores</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1c1c1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icon-192.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap"
@@ -52,6 +57,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -149,9 +155,9 @@
     .grid-area {
       flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 16px;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 8px;
       overflow: hidden;
       min-height: 0;
     }
@@ -163,7 +169,6 @@
       gap: 8px;
       width: 100%;
       height: 100%;
-      max-width: 960px;
     }
 
     /* ── Cards ─────────────────────────────────────────── */
@@ -488,7 +493,6 @@
         box-shadow: 0 0 0 8px rgba(240, 192, 64, 0);
       }
     }
-
   </style>
 </head>
 
@@ -534,7 +538,9 @@
     <footer>
       <div class="footer-info">
         <span class="conn-dot on"></span>
-        Tela dos Jogadores — Apenas observe
+        Tela dos Jogadores <span id="room-label"
+          style="display:none;margin-left:6px;padding:2px 8px;background:#ddd;border-radius:4px;font-size:11px">SALA
+          <span id="room-id-display">—</span></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="remaining-count" id="remaining-info">—</span>
@@ -555,36 +561,82 @@
   </div>
 
   <script>
+    // ─── Utility ──────────────────────────────────────────
+    function getQueryParam(name) {
+      var match = location.search.match(new RegExp("[?&]" + name + "=([^&#]*)"));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
     // ─── State ────────────────────────────────────────────
-    const STORAGE_KEY = "codename_player_state";
-    let gameState = null;
-    let ws = null;
-    let allColorsRevealed = false;
-    let gameOverTimeoutId = null;
-    let countdownIntervalId = null;
+    var STORAGE_KEY = "codename_player_state";
+    var ROOM_ID = getQueryParam("room");
+    var gameState = null;
+    var ws = null;
+    var allColorsRevealed = false;
+    var gameOverTimeoutId = null;
+    var countdownIntervalId = null;
+
+    // ─── Fix mobile viewport height ───────────────────────
+    function fixViewportHeight() {
+      var el = document.querySelector(".layout");
+      if (!el) return;
+      el.style.height = window.innerHeight + "px";
+    }
+    fixViewportHeight();
+    window.addEventListener("resize", fixViewportHeight);
 
     // ─── WebSocket ────────────────────────────────────────
+    var wsReconnectTimer = null;
+    var wsErrorCount = 0;
+
     function connectWS() {
-      const proto = location.protocol === "https:" ? "wss" : "ws";
-      ws = new WebSocket(`${proto}://${location.host}`);
+      if (wsReconnectTimer) {
+        clearTimeout(wsReconnectTimer);
+        wsReconnectTimer = null;
+      }
 
-      ws.onopen = () => setConn(true);
+      try {
+        var proto = location.protocol === "https:" ? "wss" : "ws";
+        ws = new WebSocket(proto + "://" + location.host);
+      } catch (err) {
+        document.getElementById("conn-label").textContent = "Erro ao conectar";
+        return;
+      }
 
-      ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data);
+      ws.onopen = function () {
+        wsErrorCount = 0;
+        setConn(true);
+      };
+
+      ws.onmessage = function (e) {
+        var msg;
+        try {
+          msg = JSON.parse(e.data);
+        } catch (err) {
+          return;
+        }
         if (msg.type === "gameState") {
-          const prevState = gameState;
+          var prevState = gameState;
           gameState = msg.data;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState)); } catch (e) { }
           render(prevState);
         }
       };
 
-      ws.onclose = () => {
+      ws.onclose = function () {
         setConn(false);
-        setTimeout(connectWS, 2000);
+        wsReconnectTimer = setTimeout(connectWS, 2000);
       };
-      ws.onerror = () => ws.close();
+
+      ws.onerror = function () {
+        wsErrorCount++;
+        if (wsErrorCount > 3) {
+          document.getElementById("conn-label").textContent = "Toque para reconectar";
+          ws.close();
+          return;
+        }
+        ws.close();
+      };
     }
 
     function setConn(on) {
@@ -745,14 +797,31 @@
       gameOverTimeoutId = countdownIntervalId;
     }
 
-    // ─── Init ─────────────────────────────────────────────
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        gameState = JSON.parse(saved);
-        render(null);
-      } catch { }
+    // ─── Service Worker ────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
     }
+
+    // ─── Click-to-reconnect ────────────────────────────────
+    document.getElementById("conn-label").addEventListener("click", function () {
+      connectWS();
+    });
+
+    // ─── Init ─────────────────────────────────────────────
+    if (ROOM_ID) {
+      document.getElementById("room-label").style.display = "inline";
+      document.getElementById("room-id-display").textContent = ROOM_ID;
+    }
+
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          gameState = JSON.parse(saved);
+          render(null);
+        } catch (e) { }
+      }
+    } catch (e) { }
     connectWS();
   </script>
 </body>

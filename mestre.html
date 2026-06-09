@@ -5,6 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>CODENAME — Tela dos Mestres</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1c1c1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icon-192.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap"
@@ -34,8 +39,8 @@
       --cream: #faf8f3;
       --ink: #1c1c1e;
       --border: #d0cec8;
-      --header-h: 56px;
-      --footer-h: 64px;
+      --header-h: 44px;
+      --footer-h: 40px;
       --white: #ffffff;
     }
 
@@ -53,6 +58,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -63,17 +69,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 10px;
       flex-shrink: 0;
-      gap: 12px;
+      gap: 6px;
     }
 
     .logo {
       font-family: "Black Han Sans", sans-serif;
-      font-size: 22px;
+      font-size: 16px;
       color: #fff;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .logo span {
@@ -81,30 +88,36 @@
     }
 
     .badge-master {
-      background: #f0c040;
-      color: var(--ink);
+      display: none;
+    }
+
+    .room-badge {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ccc;
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 2px;
-      padding: 3px 10px;
-      border-radius: 20px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 4px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .scores {
       display: flex;
-      gap: 10px;
+      gap: 4px;
       align-items: center;
     }
 
     .score-chip {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
-      font-size: 14px;
-      padding: 4px 12px;
-      border-radius: 6px;
-      letter-spacing: 1px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     .score-chip.green {
@@ -118,16 +131,16 @@
     }
 
     .score-chip .num {
-      font-size: 18px;
+      font-size: 14px;
     }
 
     /* ── Grid Area ─────────────────────────────────────── */
     .grid-area {
       flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 16px;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 8px;
       overflow: hidden;
       min-height: 0;
     }
@@ -139,17 +152,17 @@
       gap: 8px;
       width: 100%;
       height: 100%;
-      max-width: 900px;
     }
 
     /* ── Cards ─────────────────────────────────────────── */
     .card {
-      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      border: 2px solid transparent;
       transition:
         transform 0.12s,
         box-shadow 0.12s,
@@ -176,14 +189,16 @@
       text-align: center;
       letter-spacing: 0.5px;
       line-height: 1.1;
-      padding: 4px 6px;
+      padding: 2px 4px;
       text-transform: uppercase;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
     }
 
     /* Color variants */
     .card.green {
       background: var(--green);
-      border-color: var(--green);
     }
 
     .card.green .card-word {
@@ -192,7 +207,6 @@
 
     .card.blue {
       background: var(--blue);
-      border-color: var(--blue);
     }
 
     .card.blue .card-word {
@@ -201,7 +215,6 @@
 
     .card.gray {
       background: var(--border);
-      border-color: var(--border);
     }
 
     .card.gray .card-word {
@@ -210,7 +223,6 @@
 
     .card.black {
       background: var(--black-card);
-      border-color: #000;
     }
 
     .card.black .card-word {
@@ -293,27 +305,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 10px;
       flex-shrink: 0;
-      gap: 10px;
+      gap: 6px;
     }
 
     .footer-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
     }
 
     .status-pill {
       font-family: "Barlow Condensed", sans-serif;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 20px;
+      padding: 2px 8px;
+      border-radius: 12px;
       background: #e0ddd8;
       color: var(--gray);
+      white-space: nowrap;
     }
 
     .status-pill.active {
@@ -328,17 +341,17 @@
 
     .footer-btns {
       display: flex;
-      gap: 8px;
+      gap: 4px;
     }
 
     .btn {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 1.5px;
+      font-size: 11px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      padding: 8px 18px;
-      border-radius: 6px;
+      padding: 4px 12px;
+      border-radius: 4px;
       border: none;
       cursor: pointer;
       transition:
@@ -597,13 +610,24 @@
     }
 
     /* ── Connection status ──────────────────────────────── */
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #aaa;
+      font-family: "Barlow Condensed", sans-serif;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
     .conn-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #ccc;
       display: inline-block;
-      margin-right: 5px;
+      flex-shrink: 0;
     }
 
     .conn-dot.on {
@@ -611,9 +635,43 @@
     }
 
     /* ── Responsive font sizes for cards ───────────────── */
-    @media (max-height: 500px) {
-      .card-word {
-        font-size: 11px;
+    @media (max-width: 600px) {
+      .badge-master {
+        display: none;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .score-chip {
+        font-size: 10px;
+        padding: 1px 5px;
+      }
+
+      .score-chip .num {
+        font-size: 12px;
+      }
+
+      .logo {
+        font-size: 14px;
+      }
+
+      .room-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+      }
+
+      .conn-status {
+        font-size: 9px;
+      }
+
+      .btn {
+        font-size: 10px;
+        padding: 3px 8px;
+      }
+
+      .status-pill {
+        font-size: 9px;
+        padding: 1px 6px;
       }
     }
   </style>
@@ -626,20 +684,13 @@
       <div style="display: flex; align-items: center; gap: 12px">
         <span class="logo">CODE<span>NAME</span></span>
         <span class="badge-master">🔑 Tela dos Mestres</span>
+        <span class="room-badge" id="room-badge" style="display:none">SALA <span id="room-id-display">—</span></span>
       </div>
       <div class="scores">
         <span class="score-chip green">🟢 VERDE <span class="num" id="score-green">0</span>/10</span>
         <span class="score-chip blue">🔵 AZUL <span class="num" id="score-blue">0</span>/10</span>
       </div>
-      <div style="
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #aaa;
-            font-family: &quot;Barlow Condensed&quot;, sans-serif;
-            letter-spacing: 1px;
-          ">
+      <div class="conn-status">
         <span class="conn-dot" id="conn-dot"></span>
         <span id="conn-label">Conectando...</span>
       </div>
@@ -657,7 +708,7 @@
         <span class="status-pill" id="status-pill">Aguardando...</span>
       </div>
       <div class="footer-btns">
-        <button class="btn btn-new" onclick="confirmNewGame()">
+        <button class="btn btn-new" id="btn-new-game">
           🔄 Novo Jogo
         </button>
       </div>
@@ -674,10 +725,10 @@
         Esta ação irá revelar a cor desta palavra para todos os jogadores.
       </div>
       <div class="modal-buttons">
-        <button class="modal-btn cancel" onclick="closeModal()">
+        <button class="modal-btn cancel" id="btn-modal-cancel">
           Cancelar
         </button>
-        <button class="modal-btn confirm" onclick="confirmReveal()">
+        <button class="modal-btn confirm" id="btn-modal-confirm">
           Revelar
         </button>
       </div>
@@ -694,10 +745,10 @@
         serão sorteadas.
       </p>
       <div class="modal-buttons">
-        <button class="modal-btn cancel" onclick="closeNewGameModal()">
+        <button class="modal-btn cancel" id="btn-newgame-cancel">
           Cancelar
         </button>
-        <button class="modal-btn confirm" onclick="sendNewGame()">
+        <button class="modal-btn confirm" id="btn-newgame-confirm">
           Confirmar
         </button>
       </div>
@@ -708,226 +759,350 @@
   <div class="gameover-banner" id="gameover-banner">
     <div class="gameover-banner-inner">
       <div class="gameover-text" id="gameover-text"></div>
-      <button class="btn-newgame-banner" onclick="confirmNewGame()">
+      <button class="btn-newgame-banner" id="btn-newgame-banner">
         🔄 Novo Jogo
       </button>
     </div>
   </div>
 
   <script>
-    // ─── State ────────────────────────────────────────────
-    const STORAGE_KEY = "codename_master_state";
-    let gameState = null;
-    let pendingRevealIndex = null;
-    let ws = null;
-    let newGameCooldownTimer = null;
-
-    // ─── WebSocket ────────────────────────────────────────
-    function connectWS() {
-      const proto = location.protocol === "https:" ? "wss" : "ws";
-      ws = new WebSocket(`${proto}://${location.host}`);
-
-      ws.onopen = () => {
-        setConn(true);
-      };
-
-      ws.onmessage = (e) => {
-        const msg = JSON.parse(e.data);
-        if (msg.type === "gameState") {
-          gameState = msg.data;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
-          render();
-        }
-      };
-
-      ws.onclose = () => {
-        setConn(false);
-        setTimeout(connectWS, 2000);
-      };
-
-      ws.onerror = () => ws.close();
-    }
-
-    function setConn(on) {
-      document
-        .querySelectorAll(".conn-dot")
-        .forEach((d) => d.classList.toggle("on", on));
-      document.getElementById("conn-label").textContent = on
-        ? "Conectado"
-        : "Reconectando...";
-    }
-
-    function setNewGameEnabled(enabled) {
-      document.querySelectorAll('.btn-new, .btn-newgame-banner').forEach(btn => {
-        btn.disabled = !enabled;
-      });
-    }
-
-    // ─── Render ───────────────────────────────────────────
-    function render() {
-      if (!gameState) return;
-
-      // Scores
-      document.getElementById("score-green").textContent =
-        gameState.scores.green;
-      document.getElementById("score-blue").textContent =
-        gameState.scores.blue;
-
-      // Status pill
-      const pill = document.getElementById("status-pill");
-      if (gameState.gameOver) {
-        pill.textContent = "Jogo Encerrado";
-        pill.className = "status-pill gameover";
-      } else if (gameState.started) {
-        pill.textContent = "Jogo em Andamento";
-        pill.className = "status-pill active";
-      } else {
-        pill.textContent = "Aguardando...";
-        pill.className = "status-pill";
+    (function () {
+      // ─── Utility ──────────────────────────────────────────
+      function getQueryParam(name) {
+        var match = location.search.match(new RegExp("[?&]" + name + "=([^&#]*)"));
+        return match ? decodeURIComponent(match[1]) : null;
       }
 
-      // Game over banner
-      renderGameOver();
-
-      // New game button cooldown after game over
-      if (gameState.gameOver) {
-        if (newGameCooldownTimer === null) {
-          setNewGameEnabled(false);
-          newGameCooldownTimer = setTimeout(() => {
-            setNewGameEnabled(true);
-            newGameCooldownTimer = null;
-          }, 5000);
-        }
-      } else {
-        if (newGameCooldownTimer !== null) {
-          clearTimeout(newGameCooldownTimer);
-          newGameCooldownTimer = null;
-        }
-        setNewGameEnabled(true);
-      }
-
-      // Grid
-      const grid = document.getElementById("grid");
-      grid.innerHTML = "";
-      gameState.words.forEach((entry, i) => {
-        const card = document.createElement("div");
-        card.className = `card ${entry.color}${entry.revealed ? " revealed" : ""}`;
-        card.innerHTML = `
-      <span class="card-word">${entry.word}</span>
-    `;
-        if (!entry.revealed && !gameState.gameOver) {
-          card.addEventListener("click", () => openRevealModal(i));
-        }
-        // Dynamic font size
-        adaptFontSize(card.querySelector(".card-word"), entry.word);
-        grid.appendChild(card);
-      });
-    }
-
-    function adaptFontSize(el, word) {
-      const len = word.length;
-      if (len <= 5) el.style.fontSize = "clamp(15px, 2.3vw, 26px)";
-      else if (len <= 8) el.style.fontSize = "clamp(14px, 2vw, 23px)";
-      else if (len <= 11) el.style.fontSize = "clamp(13px, 1.7vw, 20px)";
-      else el.style.fontSize = "clamp(12px, 1.4vw, 17px)";
-    }
-
-    function renderGameOver() {
-      const banner = document.getElementById("gameover-banner");
-      const text = document.getElementById("gameover-text");
-      if (!gameState || !gameState.gameOver) {
-        banner.className = "gameover-banner";
+      var ROOM_ID = getQueryParam("room");
+      if (!ROOM_ID) {
+        document.getElementById("conn-label").textContent = "QR Code inválido! Escaneie novamente.";
+        document.querySelector(".grid-area").innerHTML =
+          '<div style="text-align:center;padding:40px;color:#999;font-family:Barlow Condensed,sans-serif;font-weight:600;font-size:18px;letter-spacing:1px">' +
+          'Código de sala não encontrado.<br>Escaneie o QR Code da tela inicial para acessar.</div>';
         return;
       }
-      banner.classList.add("active");
-      const w = gameState.winner;
-      if (w === "green") {
-        banner.classList.add("green");
-        text.textContent = "🏆 EQUIPE VERDE VENCEU!";
-      } else if (w === "blue") {
-        banner.classList.add("blue");
-        text.textContent = "🏆 EQUIPE AZUL VENCEU!";
-      } else {
-        banner.classList.add("black");
-        text.textContent = "☠ FIM DE JOGO ☠";
+
+      // ─── State ────────────────────────────────────────────
+      var gameState = null;
+      var pendingRevealIndex = null;
+      var newGameCooldownTimer = null;
+      var newGameCooldownDone = false;
+      var pollTimer = null;
+      var pairDone = false;
+
+      // ─── DOM refs (cached once) ──────────────────────────
+      var $ = function (id) { return document.getElementById(id); };
+      var gridEl = $("grid");
+      var scoreGreen = $("score-green");
+      var scoreBlue = $("score-blue");
+      var statusPill = $("status-pill");
+      var gameoverBanner = $("gameover-banner");
+      var gameoverText = $("gameover-text");
+      var connLabel = $("conn-label");
+      var connDots = document.querySelectorAll(".conn-dot");
+      var roomBadge = $("room-badge");
+      var roomIdDisplay = $("room-id-display");
+      var revealModal = $("reveal-modal");
+      var modalWordDisplay = $("modal-word-display");
+
+      // ─── Fix mobile viewport height ─────────────────────
+      (function fixViewport() {
+        var el = document.querySelector(".layout");
+        if (!el) return;
+        el.style.height = window.innerHeight + "px";
+        window.addEventListener("resize", function () {
+          el.style.height = window.innerHeight + "px";
+        });
+      })();
+
+      // ─── Connection status ──────────────────────────────
+      function setConn(on, label) {
+        for (var i = 0; i < connDots.length; i++) {
+          connDots[i].classList.toggle("on", on);
+        }
+        if (label) { connLabel.textContent = label; }
       }
-    }
 
-    // ─── Modal Reveal ─────────────────────────────────────
-    function openRevealModal(index) {
-      if (!gameState || gameState.gameOver) return;
-      const entry = gameState.words[index];
-      if (entry.revealed) return;
+      // ─── HTTP: Pair with server ─────────────────────────
+      function pairWithServer() {
+        if (pairDone) return;
+        setConn(true, "Conectando...");
 
-      pendingRevealIndex = index;
-      const display = document.getElementById("modal-word-display");
-      display.textContent = entry.word;
-      display.className = `modal-word ${entry.color}`;
-      document.getElementById("reveal-modal").classList.add("open");
-    }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/pair-room", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            pairDone = true;
+            roomBadge.style.display = "inline";
+            roomIdDisplay.textContent = ROOM_ID;
+            setConn(true, "Conectado à sala " + ROOM_ID);
+            startPolling();
+          } else {
+            var msg = "Erro ao conectar";
+            try { var d = JSON.parse(xhr.responseText); msg = d.error || msg; } catch (e) { }
+            setConn(false, msg + ". Toque para tentar novamente.");
+          }
+        };
+        xhr.onerror = function () {
+          setConn(false, "Falha de conexão. Toque para tentar novamente.");
+        };
+        xhr.send(JSON.stringify({ room: ROOM_ID }));
+      }
 
-    function closeModal() {
-      pendingRevealIndex = null;
-      document.getElementById("reveal-modal").classList.remove("open");
-    }
+      // ─── HTTP: Poll game state ──────────────────────────
+      function startPolling() {
+        fetchState();
+        pollTimer = setInterval(fetchState, 2000);
+      }
 
-    function confirmReveal() {
-      if (pendingRevealIndex === null) return;
-      ws.send(
-        JSON.stringify({ type: "revealWord", index: pendingRevealIndex }),
-      );
-      closeModal();
-    }
+      function fetchState() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/api/game-state", true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            try {
+              var state = JSON.parse(xhr.responseText);
+              gameState = state;
+              render();
+            } catch (e) {
+              // JSON parse error — ignore
+            }
+          }
+        };
+        xhr.send();
+      }
 
-    // ─── New Game ─────────────────────────────────────────
-    function confirmNewGame() {
-      document.getElementById("newgame-modal").classList.add("open");
-    }
-    function closeNewGameModal() {
-      document.getElementById("newgame-modal").classList.remove("open");
-    }
-    function sendNewGame() {
-      if (document.querySelector('.btn-new')?.disabled) return;
-      ws.send(JSON.stringify({ type: "newGame" }));
-      closeNewGameModal();
-    }
+      // ─── HTTP: Actions ──────────────────────────────────
+      function revealWord(index) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/reveal-word", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            try {
+              var data = JSON.parse(xhr.responseText);
+              gameState = data.gameState;
+              render();
+            } catch (e) { }
+          }
+        };
+        xhr.send(JSON.stringify({ index: index }));
+      }
 
-    // ─── Close modal on overlay click ────────────────────
-    document
-      .getElementById("reveal-modal")
-      .addEventListener("click", function (e) {
-        if (e.target === this) closeModal();
-      });
-    document
-      .getElementById("newgame-modal")
-      .addEventListener("click", function (e) {
-        if (e.target === this) closeNewGameModal();
-      });
+      function sendNewGameReq() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/new-game", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function () {
+          if (xhr.status === 200) fetchState();
+        };
+        xhr.send(JSON.stringify({}));
+      }
 
-    // ─── Keyboard shortcuts ───────────────────────────────
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
+      // ─── Render ─────────────────────────────────────────
+      function render() {
+        if (!gameState) return;
+
+        // Scores
+        scoreGreen.textContent = gameState.scores.green;
+        scoreBlue.textContent = gameState.scores.blue;
+
+        // Status pill
+        if (gameState.gameOver) {
+          statusPill.textContent = "Jogo Encerrado";
+          statusPill.className = "status-pill gameover";
+        } else if (gameState.started) {
+          statusPill.textContent = "Jogo em Andamento";
+          statusPill.className = "status-pill active";
+        } else {
+          statusPill.textContent = "Aguardando...";
+          statusPill.className = "status-pill";
+        }
+
+        // Game over banner
+        renderGameOver();
+
+        // Cooldown (only once per game over, not re-triggered on every poll)
+        if (gameState.gameOver) {
+          if (newGameCooldownTimer === null && !newGameCooldownDone) {
+            setNewGameEnabled(false);
+            newGameCooldownTimer = setTimeout(function () {
+              setNewGameEnabled(true);
+              newGameCooldownTimer = null;
+              newGameCooldownDone = true;
+            }, 5000);
+          }
+        } else {
+          if (newGameCooldownTimer !== null) {
+            clearTimeout(newGameCooldownTimer);
+            newGameCooldownTimer = null;
+          }
+          newGameCooldownDone = false;
+          setNewGameEnabled(true);
+        }
+
+        // Grid
+        gridEl.innerHTML = "";
+        if (!gameState.started) {
+          gridEl.style.display = "flex";
+          gridEl.style.alignItems = "center";
+          gridEl.style.justifyContent = "center";
+          gridEl.innerHTML =
+            '<div style="text-align:center;padding:20px;color:#999;font-family:\'Barlow Condensed\',sans-serif;font-weight:600;font-size:clamp(16px,3vw,24px);letter-spacing:1.5px">' +
+            '<div style="font-size:clamp(40px,8vw,64px);margin-bottom:12px">\uD83C\uDCCF</div>' +
+            '<div>Aguardando o in\u00EDcio do jogo...</div>' +
+            '<div style="font-size:clamp(12px,1.8vw,16px);color:#bbb;margin-top:8px">O mestre deve iniciar a partida no tel\u00E3o</div></div>';
+          return;
+        }
+        gridEl.style.display = "grid";
+
+        var html = "";
+        for (var i = 0; i < gameState.words.length; i++) {
+          var entry = gameState.words[i];
+          var colorClass = entry.color;
+          var revealedClass = entry.revealed ? " revealed" : "";
+          html += '<div class="card ' + colorClass + revealedClass + '" data-index="' + i + '">' +
+            '<span class="card-word" style="font-size:' + getFontSize(entry.word.length) + '">' +
+            escapeHtml(entry.word) + '</span></div>';
+        }
+        gridEl.innerHTML = html;
+
+        // Attach click handlers
+        if (!gameState.gameOver) {
+          var cards = gridEl.querySelectorAll(".card:not(.revealed)");
+          for (var i = 0; i < cards.length; i++) {
+            (function (idx) {
+              cards[i].addEventListener("click", function () {
+                openRevealModal(parseInt(this.getAttribute("data-index")));
+              });
+            })(i);
+          }
+        }
+      }
+
+      function getFontSize(len) {
+        if (len <= 5) return "clamp(15px, 2.3vw, 26px)";
+        if (len <= 8) return "clamp(14px, 2vw, 23px)";
+        if (len <= 11) return "clamp(13px, 1.7vw, 20px)";
+        return "clamp(12px, 1.4vw, 17px)";
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function setNewGameEnabled(enabled) {
+        var btns = document.querySelectorAll(".btn-new, .btn-newgame-banner");
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].disabled = !enabled;
+        }
+      }
+
+      function renderGameOver() {
+        if (!gameState || !gameState.gameOver) {
+          gameoverBanner.className = "gameover-banner";
+          return;
+        }
+        gameoverBanner.classList.add("active");
+        var w = gameState.winner;
+        if (w === "green") {
+          gameoverBanner.classList.add("green");
+          gameoverText.textContent = "\uD83C\uDFC6 EQUIPE VERDE VENCEU!";
+        } else if (w === "blue") {
+          gameoverBanner.classList.add("blue");
+          gameoverText.textContent = "\uD83C\uDFC6 EQUIPE AZUL VENCEU!";
+        } else {
+          gameoverBanner.classList.add("black");
+          gameoverText.textContent = "\u2620 FIM DE JOGO";
+        }
+      }
+
+      // ─── Modal Reveal ──────────────────────────────────
+      function openRevealModal(index) {
+        if (!gameState || gameState.gameOver) return;
+        var entry = gameState.words[index];
+        if (!entry || entry.revealed) return;
+        pendingRevealIndex = index;
+        modalWordDisplay.textContent = entry.word;
+        modalWordDisplay.className = "modal-word " + entry.color;
+        revealModal.classList.add("open");
+      }
+
+      function closeModal() {
+        pendingRevealIndex = null;
+        revealModal.classList.remove("open");
+      }
+
+      function confirmReveal() {
+        if (pendingRevealIndex === null) return;
+        revealWord(pendingRevealIndex);
         closeModal();
+      }
+
+      // ─── New Game ───────────────────────────────────────
+      function confirmNewGame() {
+        $("newgame-modal").classList.add("open");
+      }
+      function closeNewGameModal() {
+        $("newgame-modal").classList.remove("open");
+      }
+      function sendNewGame() {
+        var btn = document.querySelector(".btn-new");
+        if (btn && btn.disabled) return;
+        sendNewGameReq();
         closeNewGameModal();
       }
-      if (
-        e.key === "Enter" &&
-        document.getElementById("reveal-modal").classList.contains("open")
-      ) {
-        confirmReveal();
-      }
-    });
 
-    // ─── Init ─────────────────────────────────────────────
-    // Try restoring from localStorage while WS loads
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
+      // ─── Event listeners ───────────────────────────────
+      revealModal.addEventListener("click", function (e) {
+        if (e.target === this) closeModal();
+      });
+      $("newgame-modal").addEventListener("click", function (e) {
+        if (e.target === this) closeNewGameModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") { closeModal(); closeNewGameModal(); }
+        if (e.key === "Enter" && revealModal.classList.contains("open")) {
+          confirmReveal();
+        }
+      });
+      connLabel.addEventListener("click", function () {
+        pairWithServer();
+      });
+
+      // ─── Button handlers (replaces onclick attributes) ─
+      $("btn-new-game").addEventListener("click", confirmNewGame);
+      $("btn-newgame-banner").addEventListener("click", confirmNewGame);
+      $("btn-modal-cancel").addEventListener("click", closeModal);
+      $("btn-modal-confirm").addEventListener("click", confirmReveal);
+      $("btn-newgame-cancel").addEventListener("click", closeNewGameModal);
+      $("btn-newgame-confirm").addEventListener("click", sendNewGame);
+
+      // ─── Service Worker ─────────────────────────────────
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
+      }
+
+      // ─── Init ──────────────────────────────────────────
+      // Restore from localStorage
       try {
-        gameState = JSON.parse(saved);
-        render();
-      } catch { }
-    }
-    connectWS();
+        var saved = localStorage.getItem("codename_master_state");
+        if (saved) {
+          try {
+            gameState = JSON.parse(saved);
+            render();
+          } catch (e) { }
+        }
+      } catch (e) { }
+
+      // Start HTTP pairing immediately — no WebSocket at all
+      pairWithServer();
+    })();
   </script>
 </body>
 
